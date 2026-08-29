@@ -5,17 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Niralya 1st Birthday Invitation</title>
 
-  <!-- Link Preview / Open Graph Meta Tags -->
+  <!-- Open Graph / WhatsApp Preview Meta Tags -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Niralya 1st Birthday Invitation ✨" />
   <meta property="og:description" content="You are warmly invited to celebrate Niralya's 1st Birthday! Tap to open the invitation." />
-  <meta property="og:image" content="preview.png" />
+  <meta property="og:url" content="https://santhiyasivaa.github.io/siva-Sandhiya/" />
+  <meta property="og:image" content="https://santhiyasivaa.github.io/siva-Sandhiya/preview.png" />
+  <meta property="og:image:secure_url" content="https://santhiyasivaa.github.io/siva-Sandhiya/preview.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
 
   <!-- Twitter Card Preview -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Niralya 1st Birthday Invitation ✨" />
   <meta name="twitter:description" content="You are warmly invited to celebrate Niralya's 1st Birthday! Tap to open the invitation." />
-  <meta name="twitter:image" content="preview.png" />
+  <meta name="twitter:image" content="https://santhiyasivaa.github.io/siva-Sandhiya/preview.png" />
 
   <!-- Confetti Library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -328,18 +333,31 @@
       card.classList.toggle('open');
 
       if (isOpen) {
-        // 1. Play Background Song smoothly
-        song.play().then(() => {
-          musicBadge.style.opacity = '1';
-          musicBadge.classList.add('music-playing');
-        }).catch(err => {
-          console.log("Audio autoplay restriction: ", err);
-        });
+        // Direct Play with Catch fallback for mobile browsers
+        song.currentTime = 0;
+        song.muted = false;
+        
+        const playPromise = song.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            musicBadge.style.opacity = '1';
+            musicBadge.classList.add('music-playing');
+          }).catch(err => {
+            console.error("Audio autoplay caught: ", err);
+            // Fallback for strict browser restrictions
+            document.body.addEventListener('click', function unlockAudio() {
+              song.play();
+              musicBadge.style.opacity = '1';
+              musicBadge.classList.add('music-playing');
+              document.body.removeEventListener('click', unlockAudio);
+            }, { once: true });
+          });
+        }
 
-        // 2. Trigger Floating Balloons
+        // Trigger Floating Balloons
         createBalloons();
 
-        // 3. Trigger Confetti Blast
+        // Trigger Confetti Blast
         setTimeout(() => {
           confetti({
             particleCount: 80,
